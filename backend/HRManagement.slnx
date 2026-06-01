@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="HRManagement.API/HRManagement.API.csproj" />
+  <Project Path="HRManagement.Core/HRManagement.Core.csproj" />
+  <Project Path="HRManagement.Infrastructure/HRManagement.Infrastructure.csproj" />
+</Solution>
