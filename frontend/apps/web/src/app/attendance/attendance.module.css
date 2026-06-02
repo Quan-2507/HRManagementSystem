@@ -1,0 +1,64 @@
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.pageTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0;
+}
+
+.attendanceCard {
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.clock {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.checkInBtn {
+  background-color: #28a745;
+  color: white;
+  font-size: 1.2rem;
+  padding: 1rem 3rem;
+}
+
+.checkInBtn:hover {
+  background-color: #218838;
+}
+
+.checkOutBtn {
+  background-color: #dc3545;
+  color: white;
+  font-size: 1.2rem;
+  padding: 1rem 3rem;
+}
+
+.checkOutBtn:hover {
+  background-color: #c82333;
+}
+
+.tableContainer {
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+}

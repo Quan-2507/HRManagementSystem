@@ -44,6 +44,14 @@ export default function EmployeesPage() {
     phoneNumber: ''
   });
 
+  // Edit Modal State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editFormData, setEditFormData] = useState({
+    fullName: '',
+    phoneNumber: ''
+  });
+
   const fetchEmployees = async (pageNum: number, search: string) => {
     setLoading(true);
     setError('');
@@ -111,6 +119,62 @@ export default function EmployeesPage() {
     }
   };
 
+  const handleUpdateEmployee = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingId) return;
+    setIsSubmitting(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`http://localhost:5205/api/employees/${editingId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          fullName: editFormData.fullName,
+          phoneNumber: editFormData.phoneNumber
+        })
+      });
+      if (!res.ok) throw new Error('Lỗi cập nhật nhân viên');
+      
+      setIsEditModalOpen(false);
+      fetchEmployees(page, searchTerm);
+      alert('Cập nhật thành công!');
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteEmployee = async (id: string) => {
+    if (!confirm('Bạn có chắc chắn muốn vô hiệu hóa nhân viên này?')) return;
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`http://localhost:5205/api/employees/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!res.ok) throw new Error('Lỗi khi xóa nhân viên');
+      fetchEmployees(page, searchTerm);
+      alert('Đã xóa (vô hiệu hóa) nhân viên!');
+    } catch (err: any) {
+      alert(err.message);
+    }
+  };
+
+  const openEditModal = (emp: Employee) => {
+    setEditingId(emp.id);
+    setEditFormData({
+      fullName: emp.fullName,
+      phoneNumber: emp.phoneNumber
+    });
+    setIsEditModalOpen(true);
+  };
+
   const columns: Column<Employee>[] = [
     { header: 'Mã NV', accessor: 'code', width: '10%' },
     { header: 'Họ và tên', accessor: 'fullName', width: '25%' },
@@ -123,8 +187,18 @@ export default function EmployeesPage() {
         if (row.status === 1) return <Badge variant="success">Đang làm</Badge>;
         return <Badge variant="neutral">Đã nghỉ</Badge>;
       },
-      width: '20%'
+      width: '15%'
     },
+    {
+      header: 'Hành động',
+      accessor: (row) => (
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <Button variant="secondary" onClick={() => openEditModal(row)} style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>Sửa</Button>
+          <Button onClick={() => handleDeleteEmployee(row.id)} style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', backgroundColor: '#dc3545', color: '#fff', borderColor: '#dc3545' }}>Xóa</Button>
+        </div>
+      ),
+      width: '15%'
+    }
   ];
 
   return (
@@ -215,6 +289,41 @@ export default function EmployeesPage() {
             </Button>
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? 'Đang lưu...' : 'Lưu nhân viên'}
+            </Button>
+          </div>
+        </form>
+      </Modal>
+
+      <Modal 
+        isOpen={isEditModalOpen} 
+        onClose={() => !isSubmitting && setIsEditModalOpen(false)} 
+        title="Sửa thông tin nhân viên"
+      >
+        <form onSubmit={handleUpdateEmployee} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.9rem' }}>Họ và tên *</label>
+            <Input 
+              required
+              placeholder="Nhập họ và tên..." 
+              value={editFormData.fullName}
+              onChange={(e) => setEditFormData({...editFormData, fullName: e.target.value})}
+            />
+          </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.9rem' }}>Số điện thoại</label>
+            <Input 
+              placeholder="Nhập số điện thoại..." 
+              value={editFormData.phoneNumber}
+              onChange={(e) => setEditFormData({...editFormData, phoneNumber: e.target.value})}
+            />
+          </div>
+          
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
+            <Button type="button" variant="secondary" onClick={() => setIsEditModalOpen(false)} disabled={isSubmitting}>
+              Hủy
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Đang cập nhật...' : 'Cập nhật'}
             </Button>
           </div>
         </form>

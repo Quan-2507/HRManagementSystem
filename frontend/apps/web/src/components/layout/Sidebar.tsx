@@ -23,6 +23,22 @@ export const Sidebar = () => {
       </div>
       
       <ul className={styles.menuList}>
+        <li>
+          <Link 
+            href="/departments" 
+            className={`${styles.navLink} ${pathname === '/departments' ? styles.active : ''}`}
+          >
+            🏢 Phòng ban
+          </Link>
+        </li>
+        <li>
+          <Link 
+            href="/attendance" 
+            className={`${styles.navLink} ${pathname === '/attendance' ? styles.active : ''}`}
+          >
+            📍 Chấm công
+          </Link>
+        </li>
         {menuItems.map((item) => {
           const isActive = pathname === item.path;
           return (
