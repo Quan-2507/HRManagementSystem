@@ -6,6 +6,7 @@ using HRManagement.Core.DTOs.Common;
 using HRManagement.Core.DTOs.Employees;
 using HRManagement.Core.Entities;
 using HRManagement.Infrastructure.Data;
+using Microsoft.AspNetCore.Identity;
 
 namespace HRManagement.API.Services
 {
@@ -13,15 +14,20 @@ namespace HRManagement.API.Services
     {
         Task<PagedResult<EmployeeListDto>> GetEmployeesAsync(string? searchTerm, int pageNumber, int pageSize);
         Task<EmployeeDetailDto?> GetEmployeeDetailAsync(Guid id);
+        Task<EmployeeDetailDto> CreateEmployeeAsync(EmployeeCreateDto dto);
+        Task<bool> UpdateEmployeeAsync(Guid id, EmployeeUpdateDto dto);
+        Task<bool> DeleteEmployeeAsync(Guid id);
     }
 
     public class EmployeeService : IEmployeeService
     {
         private readonly HRManagementDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public EmployeeService(HRManagementDbContext context)
+        public EmployeeService(HRManagementDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<PagedResult<EmployeeListDto>> GetEmployeesAsync(string? searchTerm, int pageNumber, int pageSize)
@@ -92,6 +98,61 @@ namespace HRManagement.API.Services
                 DepartmentName = user.Department?.Name,
                 PositionTitle = user.Position?.Title
             };
+        }
+
+        public async Task<EmployeeDetailDto> CreateEmployeeAsync(EmployeeCreateDto dto)
+        {
+            var user = new ApplicationUser
+            {
+                Code = dto.Code,
+                FullName = dto.FullName,
+                Email = dto.Email,
+                UserName = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
+                Status = (HRManagement.Core.Enums.EmployeeStatus)1, // Active
+                JoinDate = DateTime.UtcNow
+            };
+
+            var result = await _userManager.CreateAsync(user, "Welcome@123");
+            if (!result.Succeeded)
+            {
+                throw new Exception("Lỗi khi tạo nhân viên: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+            }
+
+            return new EmployeeDetailDto
+            {
+                Id = user.Id,
+                Code = user.Code,
+                FullName = user.FullName,
+                Email = user.Email,
+                Status = user.Status
+            };
+        }
+
+        public async Task<bool> UpdateEmployeeAsync(Guid id, EmployeeUpdateDto dto)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null) return false;
+
+            user.FullName = dto.FullName;
+            user.PhoneNumber = dto.PhoneNumber;
+            user.DepartmentId = dto.DepartmentId;
+            user.PositionId = dto.PositionId;
+            user.Address = dto.Address;
+
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded;
+        }
+
+        public async Task<bool> DeleteEmployeeAsync(Guid id)
+        {
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user == null) return false;
+
+            // Soft delete by setting status to Inactive (0)
+            user.Status = (HRManagement.Core.Enums.EmployeeStatus)0; 
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded;
         }
     }
 }

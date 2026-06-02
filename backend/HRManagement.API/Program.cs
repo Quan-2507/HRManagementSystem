@@ -15,6 +15,18 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<HRManagement.API.Services.IAuthService, HRManagement.API.Services.AuthService>();
 builder.Services.AddScoped<HRManagement.API.Services.IEmployeeService, HRManagement.API.Services.EmployeeService>();
+builder.Services.AddScoped<HRManagement.API.Services.IDepartmentService, HRManagement.API.Services.DepartmentService>();
+builder.Services.AddScoped<HRManagement.API.Services.IAttendanceService, HRManagement.API.Services.AttendanceService>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 // Register DbContext
 builder.Services.AddDbContext<HRManagementDbContext>(options =>
@@ -57,6 +69,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

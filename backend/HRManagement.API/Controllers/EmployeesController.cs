@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using HRManagement.API.Services;
+using HRManagement.Core.DTOs.Employees;
 
 namespace HRManagement.API.Controllers
 {
@@ -42,6 +43,60 @@ namespace HRManagement.API.Controllers
             }
 
             return Ok(employee);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateEmployee([FromBody] EmployeeCreateDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var employee = await _employeeService.CreateEmployeeAsync(dto);
+                return CreatedAtAction(nameof(GetEmployee), new { id = employee.Id }, employee);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateEmployee(Guid id, [FromBody] EmployeeUpdateDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var success = await _employeeService.UpdateEmployeeAsync(id, dto);
+                if (!success) return NotFound();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteEmployee(Guid id)
+        {
+            try
+            {
+                var success = await _employeeService.DeleteEmployeeAsync(id);
+                if (!success) return NotFound();
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }
