@@ -17,6 +17,9 @@ builder.Services.AddScoped<HRManagement.API.Services.IAuthService, HRManagement.
 builder.Services.AddScoped<HRManagement.API.Services.IEmployeeService, HRManagement.API.Services.EmployeeService>();
 builder.Services.AddScoped<HRManagement.API.Services.IDepartmentService, HRManagement.API.Services.DepartmentService>();
 builder.Services.AddScoped<HRManagement.API.Services.IAttendanceService, HRManagement.API.Services.AttendanceService>();
+builder.Services.AddScoped<HRManagement.API.Services.ILeaveRequestService, HRManagement.API.Services.LeaveRequestService>();
+builder.Services.AddScoped<HRManagement.API.Services.IContractService, HRManagement.API.Services.ContractService>();
+builder.Services.AddScoped<HRManagement.API.Services.IPayrollService, HRManagement.API.Services.PayrollService>();
 
 builder.Services.AddCors(options =>
 {

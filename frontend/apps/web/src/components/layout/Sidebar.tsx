@@ -39,6 +39,30 @@ export const Sidebar = () => {
             📍 Chấm công
           </Link>
         </li>
+        <li>
+          <Link 
+            href="/leave-requests" 
+            className={`${styles.navLink} ${pathname === '/leave-requests' ? styles.active : ''}`}
+          >
+            📝 Đơn từ
+          </Link>
+        </li>
+        <li>
+          <Link 
+            href="/contracts" 
+            className={`${styles.navLink} ${pathname === '/contracts' ? styles.active : ''}`}
+          >
+            📜 Hợp đồng
+          </Link>
+        </li>
+        <li>
+          <Link 
+            href="/payroll" 
+            className={`${styles.navLink} ${pathname === '/payroll' ? styles.active : ''}`}
+          >
+            💰 Bảng lương
+          </Link>
+        </li>
         {menuItems.map((item) => {
           const isActive = pathname === item.path;
           return (
