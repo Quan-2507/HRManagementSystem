@@ -3,6 +3,16 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { 
+  LayoutDashboard, 
+  Users, 
+  Clock, 
+  FileText, 
+  Wallet, 
+  Briefcase,
+  ChevronLeft,
+  ChevronRight
+} from 'lucide-react';
 import styles from './Sidebar.module.css';
 
 export const Sidebar = () => {
@@ -10,61 +20,30 @@ export const Sidebar = () => {
   const pathname = usePathname();
 
   const menuItems = [
-    { name: 'Tổng quan', path: '/', icon: '📊' },
-    { name: 'Nhân sự', path: '/employees', icon: '👥' },
-    { name: 'Chấm công', path: '#', icon: '⏱️' },
-    { name: 'Cài đặt', path: '#', icon: '⚙️' },
+    { name: 'Tổng quan', path: '/', icon: LayoutDashboard },
+    { name: 'Nhân sự', path: '/employees', icon: Users },
+    { name: 'Chấm công', path: '/attendance', icon: Clock },
+    { name: 'Đơn từ', path: '/leave-requests', icon: FileText },
+    { name: 'Hợp đồng', path: '/contracts', icon: Briefcase },
+    { name: 'Bảng lương', path: '/payroll', icon: Wallet },
   ];
 
   return (
     <aside className={`${styles.sidebar} ${collapsed ? styles.collapsed : ''}`}>
       <div className={styles.logoArea}>
-        {collapsed ? 'HR' : 'HR Management'}
+        {collapsed ? (
+          <div className={styles.logoIcon}>HR</div>
+        ) : (
+          <div className={styles.logoFull}>
+            <span className={styles.logoHighlight}>1</span>HRM
+          </div>
+        )}
       </div>
       
       <ul className={styles.menuList}>
-        <li>
-          <Link 
-            href="/departments" 
-            className={`${styles.navLink} ${pathname === '/departments' ? styles.active : ''}`}
-          >
-            🏢 Phòng ban
-          </Link>
-        </li>
-        <li>
-          <Link 
-            href="/attendance" 
-            className={`${styles.navLink} ${pathname === '/attendance' ? styles.active : ''}`}
-          >
-            📍 Chấm công
-          </Link>
-        </li>
-        <li>
-          <Link 
-            href="/leave-requests" 
-            className={`${styles.navLink} ${pathname === '/leave-requests' ? styles.active : ''}`}
-          >
-            📝 Đơn từ
-          </Link>
-        </li>
-        <li>
-          <Link 
-            href="/contracts" 
-            className={`${styles.navLink} ${pathname === '/contracts' ? styles.active : ''}`}
-          >
-            📜 Hợp đồng
-          </Link>
-        </li>
-        <li>
-          <Link 
-            href="/payroll" 
-            className={`${styles.navLink} ${pathname === '/payroll' ? styles.active : ''}`}
-          >
-            💰 Bảng lương
-          </Link>
-        </li>
         {menuItems.map((item) => {
-          const isActive = pathname === item.path;
+          const isActive = pathname === item.path || (item.path !== '/' && pathname.startsWith(item.path));
+          const Icon = item.icon;
           return (
             <li key={item.name} className={styles.menuItem}>
               <Link 
@@ -72,8 +51,10 @@ export const Sidebar = () => {
                 className={`${styles.menuLink} ${isActive ? styles.active : ''}`}
                 title={collapsed ? item.name : ''}
               >
-                <span className={styles.icon}>{item.icon}</span>
-                <span className={styles.label}>{item.name}</span>
+                <div className={styles.iconWrapper}>
+                  <Icon size={20} className={styles.icon} strokeWidth={isActive ? 2.5 : 2} />
+                </div>
+                {!collapsed && <span className={styles.label}>{item.name}</span>}
               </Link>
             </li>
           );
@@ -85,7 +66,7 @@ export const Sidebar = () => {
         onClick={() => setCollapsed(!collapsed)}
         title={collapsed ? "Mở rộng" : "Thu gọn"}
       >
-        {collapsed ? '▶' : '◀'}
+        {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
       </button>
     </aside>
   );

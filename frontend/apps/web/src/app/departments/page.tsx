@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchApi } from '@/lib/api';
 import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '../../components/layout/DashboardLayout';
 import { Table, Column } from '../../components/ui/Table';
@@ -33,11 +34,9 @@ export default function DepartmentsPage() {
     setLoading(true);
     setError('');
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5205/api/departments', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      
+      const res = await fetchApi('http://localhost:5205/api/departments', {
+        
       });
       if (!res.ok) throw new Error('Lỗi khi lấy dữ liệu phòng ban');
       const json = await res.json();
@@ -57,18 +56,15 @@ export default function DepartmentsPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
+      
       const method = formData.id ? 'PUT' : 'POST';
       const url = formData.id 
         ? `http://localhost:5205/api/departments/${formData.id}` 
         : 'http://localhost:5205/api/departments';
 
-      const res = await fetch(url, {
+      const res = await fetchApi(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        
         body: JSON.stringify({
           name: formData.name,
           description: formData.description
@@ -91,12 +87,10 @@ export default function DepartmentsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm('Bạn có chắc chắn muốn xóa phòng ban này?')) return;
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5205/api/departments/${id}`, {
+      
+      const res = await fetchApi(`http://localhost:5205/api/departments/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        
       });
       if (!res.ok) {
         const errorData = await res.json();

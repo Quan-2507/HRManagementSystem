@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchApi } from '@/lib/api';
 import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '../../components/layout/DashboardLayout';
 import { Table, Column } from '../../components/ui/Table';
@@ -53,11 +54,11 @@ export default function ContractsPage() {
     setLoading(true);
     setError('');
     try {
-      const token = localStorage.getItem('token');
+      
       
       const [contractRes, empRes] = await Promise.all([
-        fetch('http://localhost:5205/api/contracts', { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch('http://localhost:5205/api/employees', { headers: { 'Authorization': `Bearer ${token}` } })
+        fetch('http://localhost:5205/api/contracts', {  }),
+        fetch('http://localhost:5205/api/employees', {  })
       ]);
       
       if (!contractRes.ok) throw new Error('Lỗi tải danh sách hợp đồng');
@@ -84,13 +85,10 @@ export default function ContractsPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5205/api/contracts', {
+      
+      const res = await fetchApi('http://localhost:5205/api/contracts', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        
         body: JSON.stringify({
           employeeId: formData.employeeId,
           contractNumber: formData.contractNumber,
@@ -117,12 +115,10 @@ export default function ContractsPage() {
   const handleTerminate = async (id: string) => {
     if (!confirm('Bạn có chắc chắn muốn chấm dứt hợp đồng này?')) return;
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5205/api/contracts/${id}/terminate`, {
+      
+      const res = await fetchApi(`http://localhost:5205/api/contracts/${id}/terminate`, {
         method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        
       });
       if (!res.ok) throw new Error('Lỗi khi chấm dứt hợp đồng');
       fetchData();
@@ -159,7 +155,7 @@ export default function ContractsPage() {
       accessor: (row) => {
         if (row.status === 1) return <Badge variant="success">Hiệu lực</Badge>;
         if (row.status === 2) return <Badge variant="neutral">Hết hạn</Badge>;
-        return <Badge variant="danger" style={{ backgroundColor: '#dc3545' }}>Chấm dứt</Badge>;
+        return <Badge variant="danger">Chấm dứt</Badge>;
       },
       width: '10%' 
     },

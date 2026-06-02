@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchApi } from '@/lib/api';
 import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '../../components/layout/DashboardLayout';
 import { Table, Column } from '../../components/ui/Table';
@@ -47,12 +48,10 @@ export default function LeaveRequestsPage() {
     setLoading(true);
     setError('');
     try {
-      const token = localStorage.getItem('token');
+      
       const endpoint = viewMode === 'all' ? 'api/leaveRequests' : 'api/leaveRequests/my';
-      const res = await fetch(`http://localhost:5205/${endpoint}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      const res = await fetchApi(`http://localhost:5205/${endpoint}`, {
+        
       });
       if (!res.ok) throw new Error('Lỗi khi lấy dữ liệu đơn từ');
       const json = await res.json();
@@ -72,13 +71,10 @@ export default function LeaveRequestsPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5205/api/leaveRequests', {
+      
+      const res = await fetchApi('http://localhost:5205/api/leaveRequests', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        
         body: JSON.stringify(formData)
       });
       
@@ -100,13 +96,10 @@ export default function LeaveRequestsPage() {
 
   const handleApproveReject = async (id: string, newStatus: number) => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5205/api/leaveRequests/${id}/approve`, {
+      
+      const res = await fetchApi(`http://localhost:5205/api/leaveRequests/${id}/approve`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        
         body: JSON.stringify({ status: newStatus })
       });
       
@@ -139,7 +132,7 @@ export default function LeaveRequestsPage() {
         // 1: Pending, 2: Approved, 3: Rejected
         if (row.status === 1) return <Badge variant="neutral">Chờ duyệt</Badge>;
         if (row.status === 2) return <Badge variant="success">Đã duyệt</Badge>;
-        return <Badge variant="danger" style={{ backgroundColor: '#dc3545' }}>Từ chối</Badge>;
+        return <Badge variant="danger">Từ chối</Badge>;
       },
       width: '15%' 
     },

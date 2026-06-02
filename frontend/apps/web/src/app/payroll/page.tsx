@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchApi } from '@/lib/api';
 import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '../../components/layout/DashboardLayout';
 import { Table, Column } from '../../components/ui/Table';
@@ -45,9 +46,9 @@ export default function PayrollPage() {
     setLoading(true);
     setError('');
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5205/api/payrolls/${selectedYear}/${selectedMonth}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+      
+      const res = await fetchApi(`http://localhost:5205/api/payrolls/${selectedYear}/${selectedMonth}`, {
+        
       });
       if (!res.ok) throw new Error('Lỗi tải bảng lương');
       const json = await res.json();
@@ -65,13 +66,10 @@ export default function PayrollPage() {
 
   const handleGenerate = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5205/api/payrolls/generate', {
+      
+      const res = await fetchApi('http://localhost:5205/api/payrolls/generate', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        
         body: JSON.stringify({ month: selectedMonth, year: selectedYear })
       });
       const resData = await res.json();
@@ -88,13 +86,10 @@ export default function PayrollPage() {
     if (!editingId) return;
     setIsSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5205/api/payrolls/${editingId}`, {
+      
+      const res = await fetchApi(`http://localhost:5205/api/payrolls/${editingId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        
         body: JSON.stringify(editFormData)
       });
       if (!res.ok) throw new Error('Lỗi cập nhật bảng lương');

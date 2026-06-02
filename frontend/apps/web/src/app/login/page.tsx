@@ -20,6 +20,7 @@ export default function LoginPage() {
       const res = await fetch('http://localhost:5205/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
       });
 
@@ -28,7 +29,6 @@ export default function LoginPage() {
       }
 
       const data = await res.json();
-      localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify({ email: data.email, fullName: data.fullName }));
       
       // Redirect to dashboard (mock for now)

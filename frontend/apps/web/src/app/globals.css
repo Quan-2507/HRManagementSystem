@@ -1,27 +1,37 @@
 :root {
-  /* Colors - Light Theme - Blue Primary */
-  --color-primary: #1a73e8; /* Primary Blue */
+  /* Colors - Light Theme - 1Office Inspired */
+  --color-primary: #1a73e8; 
   --color-primary-hover: #1557b0;
   --color-primary-light: #e8f0fe;
   
-  --color-background: #f4f6f9;
-  --color-surface: #ffffff;
+  --color-background: #f0f2f5; /* Light gray background like modern SaaS */
+  --color-surface: #ffffff; /* White panels */
   
   --color-text-main: #202124;
   --color-text-muted: #5f6368;
+  --color-text-light: #80868b;
   
-  --color-border: #dadce0;
-  --color-error: #ea4335;
+  --color-border: #e0e0e0;
+  --color-border-light: #f1f3f4;
+  
+  --color-success: #0f9d58;
+  --color-success-bg: #e6f4ea;
+  --color-warning: #f4b400;
+  --color-warning-bg: #fef7e0;
+  --color-error: #db4437;
+  --color-error-bg: #fce8e6;
   
   /* Shadows & Depth */
-  --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+  --shadow-sm: 0 1px 2px 0 rgba(60,64,67,0.1), 0 1px 3px 1px rgba(60,64,67,0.05);
+  --shadow-md: 0 4px 6px -1px rgba(60,64,67,0.1), 0 2px 4px -1px rgba(60,64,67,0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(60,64,67,0.1), 0 4px 6px -2px rgba(60,64,67,0.05);
+  --shadow-card: 0 2px 4px rgba(0,0,0,0.08); /* Soft shadow for dashboard cards */
   
   /* Radius */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 1rem;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
   --radius-full: 9999px;
 
   /* Transitions */
@@ -36,9 +46,9 @@
 }
 
 body {
-  background-color: var(--color-background);
+  background-color: #4f46e5; /* Indigo/Purple background as requested */
   color: var(--color-text-main);
-  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -54,14 +64,21 @@ a:hover {
   color: var(--color-primary-hover);
 }
 
-/* Glassmorphism Utilities */
+/* Glassmorphism Utilities - Updated to Solid White Surface for modern look */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: var(--shadow-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-md);
+}
+
+/* Card utilities */
+.card {
+  background: var(--color-surface);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+  border: 1px solid var(--color-border-light);
 }
 
 /* Keyframes */
@@ -77,5 +94,17 @@ a:hover {
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* App Wrapper for the specific design requested */
+.app-wrapper {
+  display: flex;
+  width: calc(100vw - 32px);
+  height: calc(100vh - 32px);
+  margin: 16px;
+  background-color: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }

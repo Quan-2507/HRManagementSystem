@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchApi } from '@/lib/api';
 import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '../../components/layout/DashboardLayout';
 import { Table, Column } from '../../components/ui/Table';
@@ -56,11 +57,9 @@ export default function EmployeesPage() {
     setLoading(true);
     setError('');
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5205/api/employees?pageNumber=${pageNum}&pageSize=10&searchTerm=${encodeURIComponent(search)}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      
+      const res = await fetchApi(`http://localhost:5205/api/employees?pageNumber=${pageNum}&pageSize=10&searchTerm=${encodeURIComponent(search)}`, {
+        
       });
       if (!res.ok) {
         if (res.status === 401) {
@@ -92,13 +91,10 @@ export default function EmployeesPage() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5205/api/employees', {
+      
+      const res = await fetchApi('http://localhost:5205/api/employees', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        
         body: JSON.stringify(formData)
       });
       
@@ -124,13 +120,10 @@ export default function EmployeesPage() {
     if (!editingId) return;
     setIsSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5205/api/employees/${editingId}`, {
+      
+      const res = await fetchApi(`http://localhost:5205/api/employees/${editingId}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        
         body: JSON.stringify({
           fullName: editFormData.fullName,
           phoneNumber: editFormData.phoneNumber
@@ -151,12 +144,10 @@ export default function EmployeesPage() {
   const handleDeleteEmployee = async (id: string) => {
     if (!confirm('Bạn có chắc chắn muốn vô hiệu hóa nhân viên này?')) return;
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:5205/api/employees/${id}`, {
+      
+      const res = await fetchApi(`http://localhost:5205/api/employees/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        
       });
       if (!res.ok) throw new Error('Lỗi khi xóa nhân viên');
       fetchEmployees(page, searchTerm);

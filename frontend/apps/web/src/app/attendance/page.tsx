@@ -1,5 +1,6 @@
 'use client';
 
+import { fetchApi } from '@/lib/api';
 import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '../../components/layout/DashboardLayout';
 import { Table, Column } from '../../components/ui/Table';
@@ -30,9 +31,9 @@ export default function AttendancePage() {
   const fetchAttendance = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5205/api/attendance/today', {
-        headers: { 'Authorization': `Bearer ${token}` }
+      
+      const res = await fetchApi('http://localhost:5205/api/attendance/today', {
+        
       });
       if (!res.ok) throw new Error('Lỗi tải dữ liệu chấm công');
       const json = await res.json();
@@ -79,14 +80,11 @@ export default function AttendancePage() {
       const { latitude, longitude } = pos.coords;
 
       // 2. Gọi API
-      const token = localStorage.getItem('token');
+      
       const endpoint = type === 'check-in' ? 'check-in' : 'check-out';
-      const res = await fetch(`http://localhost:5205/api/attendance/${endpoint}`, {
+      const res = await fetchApi(`http://localhost:5205/api/attendance/${endpoint}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        
         body: JSON.stringify({
           latitude,
           longitude,

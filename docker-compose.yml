@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: hrm_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: HRManagementDB
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: hrm_api
+    depends_on:
+      - db
+    ports:
+      - "5205:5205"
+      - "7027:7027"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5205
+      - ConnectionStrings__DefaultConnection=Host=db;Database=HRManagementDB;Username=postgres;Password=mysecretpassword
+    restart: always
+
+  web:
+    build:
+      context: ./frontend/apps/web
+      dockerfile: Dockerfile
+    container_name: hrm_web
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+    restart: always
+
+volumes:
+  postgres_data:

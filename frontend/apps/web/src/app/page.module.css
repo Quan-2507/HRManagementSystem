@@ -1,0 +1,133 @@
+.dashboardContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.statContent {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.statIconWrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.statInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.statValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: auto auto;
+  gap: 1.5rem;
+}
+
+.chartSpan2 {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.chartTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  margin-bottom: 1.5rem;
+}
+
+.chartContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.miniStatsGrid {
+  grid-column: span 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.miniStatContent {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.miniStatInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.miniStatLabel {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.miniStatValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .chartsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .chartSpan2 {
+    grid-column: span 2;
+    grid-row: auto;
+  }
+  .miniStatsGrid {
+    grid-column: span 2;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+  .chartsGrid {
+    grid-template-columns: 1fr;
+  }
+  .chartSpan2 {
+    grid-column: span 1;
+  }
+  .miniStatsGrid {
+    grid-column: span 1;
+    grid-template-columns: 1fr;
+  }
+}

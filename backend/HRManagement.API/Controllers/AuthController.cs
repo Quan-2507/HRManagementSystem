@@ -25,7 +25,29 @@ namespace HRManagement.API.Controllers
                 return Unauthorized(new { message = "Invalid email or password" });
             }
 
-            return Ok(response);
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false,
+                SameSite = SameSiteMode.Lax,
+                Expires = System.DateTime.UtcNow.AddHours(2)
+            };
+
+            Response.Cookies.Append("token", response.Token, cookieOptions);
+
+            return Ok(new { message = "Login successful", fullName = response.FullName, email = response.Email });
+        }
+
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("token", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = false,
+                SameSite = SameSiteMode.Lax
+            });
+            return Ok(new { message = "Logged out successfully" });
         }
 
         [HttpPost("register")]

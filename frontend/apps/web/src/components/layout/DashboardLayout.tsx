@@ -10,14 +10,14 @@ export const DashboardLayout = ({ children }: { children: React.ReactNode }) => 
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
+    const user = localStorage.getItem('user');
+    if (!user) {
       router.push('/login');
     }
   }, [router]);
 
   return (
-    <div className={styles.layout}>
+    <div className="app-wrapper animate-fade-in-up">
       <Sidebar />
       <div className={styles.mainContent}>
         <Header />
