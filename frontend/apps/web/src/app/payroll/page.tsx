@@ -1,233 +1,272 @@
 'use client';
 
-import { fetchApi } from '@/lib/api';
-import React, { useEffect, useState } from 'react';
-import { DashboardLayout } from '../../components/layout/DashboardLayout';
-import { Table, Column } from '../../components/ui/Table';
-import { Badge } from '../../components/ui/Badge';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { Modal } from '../../components/ui/Modal';
+import React, { useState } from 'react';
+import { 
+  Search, 
+  Filter, 
+  Download, 
+  Upload, 
+  UserPlus, 
+  CheckCircle, 
+  RefreshCcw,
+  ChevronRight,
+  ChevronDown,
+  Paperclip
+} from 'lucide-react';
 import styles from './payroll.module.css';
 
-interface Payroll {
-  id: string;
-  employeeName: string;
-  month: number;
-  year: number;
-  basicSalary: number;
-  allowances: number;
-  deductions: number;
-  netSalary: number;
-  status: number;
-}
+// --- Dummy Data ---
+const dummyData = [
+  {
+    id: '1',
+    name: 'A. CÔNG TY CỔ PHẦN 1OFFICE',
+    isExpanded: true,
+    level: 0,
+    headcount: 24,
+    basicSalary: 326400000,
+    travelAllow: 25000000,
+    phoneAllow: 13800000,
+    uniformAllow: 10000000,
+    housingAllow: 16500000,
+    mealAllow: 680000,
+    respAllow: 41100000,
+    children: [
+      {
+        id: '1.1',
+        name: '1. [GTV] Chi nhánh HCM 1Office',
+        isExpanded: true,
+        level: 1,
+        headcount: 24,
+        basicSalary: 326400000,
+        travelAllow: 25000000,
+        phoneAllow: 13800000,
+        uniformAllow: 10000000,
+        housingAllow: 16500000,
+        mealAllow: 680000,
+        respAllow: 41100000,
+        children: [
+          {
+            id: '1.1.1',
+            name: '1.1. [GTV] Phòng BOD chi nhánh',
+            isExpanded: true,
+            level: 2,
+            headcount: 5,
+            basicSalary: 99400000,
+            travelAllow: 6000000,
+            phoneAllow: 3000000,
+            uniformAllow: 3600000,
+            housingAllow: 11000000,
+            mealAllow: 200000,
+            respAllow: 2500000,
+            children: [
+              {
+                id: '1.1.1.1',
+                name: '1.1.1. [GTV] Phòng Cố Vấn Chi Nhánh',
+                isExpanded: false,
+                level: 3,
+                headcount: 2,
+                basicSalary: 42800000,
+                travelAllow: 2000000,
+                phoneAllow: 1200000,
+                uniformAllow: 800000,
+                housingAllow: 4000000,
+                mealAllow: 60000,
+                respAllow: 0,
+              },
+              {
+                id: '1.1.1.2',
+                name: '1.1.2. [GTV] Phòng Giám Sát Nội Bộ Chi Nhánh',
+                isExpanded: false,
+                level: 3,
+                headcount: 1,
+                basicSalary: 12700000,
+                travelAllow: 1000000,
+                phoneAllow: 600000,
+                uniformAllow: 400000,
+                housingAllow: 0,
+                mealAllow: 30000,
+                respAllow: 2500000,
+              }
+            ]
+          },
+          {
+            id: '1.1.2',
+            name: '1.2. [GTV] Phòng Kinh Doanh HCM',
+            isExpanded: true,
+            level: 2,
+            headcount: 7,
+            basicSalary: 73900000,
+            travelAllow: 7000000,
+            phoneAllow: 4200000,
+            uniformAllow: 2000000,
+            housingAllow: 1000000,
+            mealAllow: 150000,
+            respAllow: 10000000,
+            children: [
+              {
+                id: '1.1.2.1',
+                name: '1.2.1. [GTV] Phòng Kinh Doanh 1 - HCM',
+                isExpanded: false,
+                level: 3,
+                headcount: 2,
+                basicSalary: 20000000,
+                travelAllow: 2000000,
+                phoneAllow: 1200000,
+                uniformAllow: 400000,
+                housingAllow: 0,
+                mealAllow: 30000,
+                respAllow: 0,
+              },
+              {
+                id: '1.1.2.2',
+                name: '1.2.2. [GTV] Phòng Kinh Doanh 2 - HCM',
+                isExpanded: false,
+                level: 3,
+                headcount: 3,
+                basicSalary: 33300000,
+                travelAllow: 3000000,
+                phoneAllow: 1800000,
+                uniformAllow: 800000,
+                housingAllow: 1000000,
+                mealAllow: 60000,
+                respAllow: 5000000,
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+];
 
-export default function PayrollPage() {
-  const currentMonth = new Date().getMonth() + 1;
-  const currentYear = new Date().getFullYear();
-
-  const [data, setData] = useState<Payroll[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  
-  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
-  const [selectedYear, setSelectedYear] = useState(currentYear);
-  
-  // Modal state
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editFormData, setEditFormData] = useState({
-    allowances: 0,
-    deductions: 0
+// Flatting function for tree rendering
+const flattenData = (nodes: any[], result: any[] = []) => {
+  nodes.forEach(node => {
+    result.push(node);
+    if (node.isExpanded && node.children && node.children.length > 0) {
+      flattenData(node.children, result);
+    }
   });
+  return result;
+};
 
-  const fetchData = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      
-      const res = await fetchApi(`http://localhost:5205/api/payrolls/${selectedYear}/${selectedMonth}`, {
-        
+// Formatter function
+const formatCurrency = (amount: number) => {
+  if (amount === 0) return '0';
+  return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+export default function PayrollSummaryPage() {
+  const [data, setData] = useState(dummyData);
+
+  const toggleExpand = (id: string) => {
+    const updateNode = (nodes: any[]): any[] => {
+      return nodes.map(node => {
+        if (node.id === id) {
+          return { ...node, isExpanded: !node.isExpanded };
+        }
+        if (node.children) {
+          return { ...node, children: updateNode(node.children) };
+        }
+        return node;
       });
-      if (!res.ok) throw new Error('Lỗi tải bảng lương');
-      const json = await res.json();
-      setData(json);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    };
+    setData(updateNode(data));
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [selectedMonth, selectedYear]);
-
-  const handleGenerate = async () => {
-    try {
-      
-      const res = await fetchApi('http://localhost:5205/api/payrolls/generate', {
-        method: 'POST',
-        
-        body: JSON.stringify({ month: selectedMonth, year: selectedYear })
-      });
-      const resData = await res.json();
-      if (!res.ok) throw new Error(resData.message || 'Lỗi tạo bảng lương');
-      alert(resData.message);
-      fetchData();
-    } catch (err: any) {
-      alert(err.message);
-    }
-  };
-
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingId) return;
-    setIsSubmitting(true);
-    try {
-      
-      const res = await fetchApi(`http://localhost:5205/api/payrolls/${editingId}`, {
-        method: 'PUT',
-        
-        body: JSON.stringify(editFormData)
-      });
-      if (!res.ok) throw new Error('Lỗi cập nhật bảng lương');
-      
-      setIsEditModalOpen(false);
-      fetchData();
-      alert('Đã cập nhật phụ cấp / khấu trừ!');
-    } catch (err: any) {
-      alert(err.message);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const openEditModal = (row: Payroll) => {
-    setEditingId(row.id);
-    setEditFormData({
-      allowances: row.allowances,
-      deductions: row.deductions
-    });
-    setIsEditModalOpen(true);
-  };
-
-  const formatMoney = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
-  };
-
-  const columns: Column<Payroll>[] = [
-    { header: 'Nhân viên', accessor: 'employeeName', width: '20%' },
-    { 
-      header: 'Lương CB', 
-      accessor: (row) => formatMoney(row.basicSalary),
-      width: '15%' 
-    },
-    { 
-      header: 'Phụ cấp (+)', 
-      accessor: (row) => formatMoney(row.allowances),
-      width: '15%' 
-    },
-    { 
-      header: 'Khấu trừ (-)', 
-      accessor: (row) => formatMoney(row.deductions),
-      width: '15%' 
-    },
-    { 
-      header: 'Thực lãnh', 
-      accessor: (row) => <strong style={{ color: '#28a745' }}>{formatMoney(row.netSalary)}</strong>,
-      width: '15%' 
-    },
-    {
-      header: 'Hành động',
-      accessor: (row) => (
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <Button variant="secondary" onClick={() => openEditModal(row)} style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>Điều chỉnh</Button>
-        </div>
-      ),
-      width: '10%'
-    }
-  ];
+  const flatList = flattenData(data);
 
   return (
-    <DashboardLayout>
-      <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Bảng Lương Tháng {selectedMonth}/{selectedYear}</h1>
-        <Button onClick={handleGenerate}>⚙️ Tự động tính lương tháng {selectedMonth}</Button>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.headerTop}>
+          <div className={styles.titleArea}>
+            <div className={styles.orangeSquare}>+</div>
+            <h1 className={styles.pageTitle}>Bảng lương tổng hợp - Thiên Á Group 100%</h1>
+          </div>
+          <div className={styles.headerActions}>
+            <div className={styles.searchBox}>
+              <Search size={16} className={styles.searchIcon} />
+              <input type="text" placeholder="Tìm kiếm" className={styles.searchInput} />
+              <Filter size={16} className={styles.filterIcon} />
+            </div>
+            <button className={styles.actionBtn}>
+              <Upload size={16} /> Import
+            </button>
+            <button className={styles.actionBtn}>
+              <Download size={16} /> Export
+            </button>
+            <button className={styles.actionBtn}>
+              <UserPlus size={16} /> Thêm người
+            </button>
+            <button className={styles.actionBtn}>
+              <CheckCircle size={16} /> Chốt
+            </button>
+            <button className={styles.actionBtn}>
+              <RefreshCcw size={16} /> Tính lại
+            </button>
+          </div>
+        </div>
+
+        <div className={styles.tabsRow}>
+          <div className={styles.tab}>Bảng lương</div>
+          <div className={styles.tab}>Chi tiết công thức</div>
+          <div className={`${styles.tab} ${styles.activeTab}`}>Tổng hợp lương</div>
+          <div className={styles.tab}>Đính kèm</div>
+        </div>
       </div>
 
-      <div className={styles.filterBar}>
-        <span>Chọn tháng:</span>
-        <select 
-          className={styles.filterSelect}
-          value={selectedMonth} 
-          onChange={(e) => setSelectedMonth(Number(e.target.value))}
-        >
-          {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-            <option key={m} value={m}>Tháng {m}</option>
-          ))}
-        </select>
-        <select 
-          className={styles.filterSelect}
-          value={selectedYear} 
-          onChange={(e) => setSelectedYear(Number(e.target.value))}
-        >
-          {[currentYear - 1, currentYear, currentYear + 1].map(y => (
-            <option key={y} value={y}>Năm {y}</option>
-          ))}
-        </select>
+      <div className={styles.content}>
+        <div className={styles.tableContainer}>
+          <table className={styles.payrollTable}>
+            <thead>
+              <tr>
+                <th className={`${styles.stickyCol} ${styles.colDept}`}>Phòng ban</th>
+                <th className={styles.colNum}>Số nhân sự</th>
+                <th className={styles.colNum}>Lương cơ bản gross</th>
+                <th className={styles.colNum}>[GTV] Phụ cấp đi lại</th>
+                <th className={styles.colNum}>[GTV] Phụ cấp điện thoại</th>
+                <th className={styles.colNum}>[GTV] Phụ cấp đồng phục</th>
+                <th className={styles.colNum}>[GTV] Phụ cấp nhà ở</th>
+                <th className={styles.colNum}>[GTV] Phụ cấp tiền ăn</th>
+                <th className={styles.colNum}>[GTV] Phụ cấp trách nhiệm</th>
+              </tr>
+            </thead>
+            <tbody>
+              {flatList.map((row, index) => (
+                <tr key={row.id} className={row.level === 0 ? styles.rowLevel0 : row.level === 1 ? styles.rowLevel1 : ''}>
+                  <td className={`${styles.stickyCol} ${styles.colDept}`}>
+                    <div 
+                      className={styles.deptCell} 
+                      style={{ paddingLeft: `${row.level * 20 + 10}px` }}
+                    >
+                      {row.children && row.children.length > 0 ? (
+                        <button 
+                          className={styles.expandBtn} 
+                          onClick={() => toggleExpand(row.id)}
+                        >
+                          {row.isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                        </button>
+                      ) : (
+                        <span className={styles.expandSpacer}></span>
+                      )}
+                      <span className={styles.deptName}>{row.name}</span>
+                    </div>
+                  </td>
+                  <td className={styles.colNum}>{row.headcount}</td>
+                  <td className={styles.colNum}>{formatCurrency(row.basicSalary)}</td>
+                  <td className={styles.colNum}>{formatCurrency(row.travelAllow)}</td>
+                  <td className={styles.colNum}>{formatCurrency(row.phoneAllow)}</td>
+                  <td className={styles.colNum}>{formatCurrency(row.uniformAllow)}</td>
+                  <td className={styles.colNum}>{formatCurrency(row.housingAllow)}</td>
+                  <td className={styles.colNum}>{formatCurrency(row.mealAllow)}</td>
+                  <td className={styles.colNum}>{formatCurrency(row.respAllow)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-
-      <div className={styles.tableContainer}>
-        {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
-        <Table<Payroll> 
-          columns={columns} 
-          data={data} 
-          keyExtractor={(row) => row.id} 
-        />
-        {data.length === 0 && !loading && (
-          <p style={{ textAlign: 'center', marginTop: '1rem', color: '#666' }}>
-            Chưa có bảng lương nào trong tháng này. Nhấn "Tự động tính lương" để hệ thống lấy dữ liệu từ Hợp đồng.
-          </p>
-        )}
-      </div>
-
-      <Modal 
-        isOpen={isEditModalOpen} 
-        onClose={() => !isSubmitting && setIsEditModalOpen(false)} 
-        title="Điều chỉnh Phụ cấp & Khấu trừ"
-      >
-        <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.9rem' }}>Phụ cấp (Thưởng, Ăn trưa...)</label>
-            <Input 
-              type="number"
-              min="0"
-              value={editFormData.allowances}
-              onChange={(e) => setEditFormData({...editFormData, allowances: Number(e.target.value)})}
-            />
-          </div>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.9rem' }}>Khấu trừ (Phạt, Tạm ứng...)</label>
-            <Input 
-              type="number"
-              min="0"
-              value={editFormData.deductions}
-              onChange={(e) => setEditFormData({...editFormData, deductions: Number(e.target.value)})}
-            />
-          </div>
-          
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
-            <Button type="button" variant="secondary" onClick={() => setIsEditModalOpen(false)} disabled={isSubmitting}>
-              Hủy
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Đang lưu...' : 'Lưu điều chỉnh'}
-            </Button>
-          </div>
-        </form>
-      </Modal>
-    </DashboardLayout>
+    </div>
   );
 }

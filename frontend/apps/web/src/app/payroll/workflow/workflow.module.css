@@ -1,0 +1,380 @@
+.container {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Using full height for canvas */
+  background-color: #f9f9f9;
+  /* Dot grid pattern */
+  background-image: radial-gradient(#d1d5db 1px, transparent 1px);
+  background-size: 20px 20px;
+  overflow: hidden;
+  font-family: var(--font-inter), sans-serif;
+}
+
+/* Header */
+.header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid var(--color-border-light);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 10;
+}
+
+.orangeSquare {
+  width: 24px;
+  height: 24px;
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.pageTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  margin: 0;
+}
+
+/* Canvas Area */
+.canvas {
+  position: absolute;
+  top: 60px; /* Below header */
+  left: 0;
+  width: 100%;
+  height: calc(100% - 60px);
+  overflow: auto;
+}
+
+/* SVG Lines Container */
+.svgLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1000px;
+  height: 800px;
+  pointer-events: none; /* Let clicks pass through to nodes */
+  z-index: 1;
+}
+
+.connectionLine {
+  fill: none;
+  stroke: #9ca3af;
+  stroke-width: 2;
+}
+
+.connectionArrow {
+  fill: #9ca3af;
+}
+
+/* Nodes Wrapper */
+.nodesLayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1000px;
+  height: 800px;
+  z-index: 2;
+}
+
+.node {
+  position: absolute;
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  cursor: pointer;
+  border: 1px solid var(--color-border-light);
+}
+
+.nodeStart {
+  background-color: #ef4444; /* Red */
+  color: white;
+  border: none;
+  border-radius: 20px;
+  min-width: 80px;
+}
+
+.nodeCondition {
+  border-color: #f59e0b; /* Orange border */
+}
+
+.nodeAccepted {
+  background-color: #3b82f6; /* Blue */
+  color: white;
+  border: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.nodeRejected {
+  color: #ef4444;
+  border: 1px solid #ef4444;
+}
+
+.nodeAction {
+  background-color: #ffffff;
+}
+
+.nodeEnd {
+  background-color: #10b981; /* Green */
+  color: white;
+  border: none;
+  border-radius: 20px;
+  min-width: 80px;
+}
+
+
+/* SIDEBAR / MODAL SETTINGS (Right overlay) */
+.settingsOverlay {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 400px;
+  height: calc(100% - 60px);
+  background-color: white;
+  border-left: 1px solid var(--color-border-light);
+  box-shadow: -4px 0 15px rgba(0,0,0,0.05);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+}
+
+.settingsOverlay.hidden {
+  transform: translateX(100%);
+}
+
+.settingsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.settingsTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  margin: 0;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settingsBody {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.required {
+  color: #ef4444;
+}
+
+.formInput {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--color-text-main);
+  outline: none;
+  transition: border-color 0.2s;
+  background-color: #fcfcfc;
+}
+
+.formInput:focus {
+  border-color: var(--color-primary);
+  background-color: #ffffff;
+}
+
+.inputIconWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  right: 10px;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+
+.formInputWithIcon {
+  padding-right: 2rem;
+  width: 100%;
+}
+
+/* User Tag (Người duyệt) */
+.userTagContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.4rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 6px;
+  min-height: 42px;
+  background-color: #ffffff;
+}
+
+.userTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  padding: 0.2rem 0.4rem 0.2rem 0.2rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--color-text-main);
+}
+
+.userAvatar {
+  width: 20px;
+  height: 20px;
+  background-color: #3b82f6;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: bold;
+}
+
+.removeTagBtn {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-left: 0.2rem;
+}
+
+.removeTagBtn:hover {
+  color: #ef4444;
+}
+
+/* Time Inputs */
+.timeRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.timeInputGroup {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border-light);
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.timeInputGroup input {
+  width: 100%;
+  border: none;
+  padding: 0.6rem;
+  font-size: 0.85rem;
+  text-align: right;
+  outline: none;
+}
+
+.timeLabel {
+  background-color: #f3f4f6;
+  padding: 0.6rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  border-left: 1px solid var(--color-border-light);
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-main);
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  accent-color: var(--color-primary);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* Settings Footer */
+.settingsFooter {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--color-border-light);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  background-color: #f9fafb;
+}
+
+.btnPrimary {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.btnSecondary {
+  background-color: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border-light);
+  padding: 0.6rem 1.25rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.85rem;
+  cursor: pointer;
+}

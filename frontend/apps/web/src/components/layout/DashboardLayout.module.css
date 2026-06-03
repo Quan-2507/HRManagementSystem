@@ -9,7 +9,7 @@
 
 .pageContainer {
   flex: 1;
-  padding: 1.5rem 2rem;
+  padding: 1.5rem;
   overflow-y: auto;
   position: relative;
   z-index: 1;

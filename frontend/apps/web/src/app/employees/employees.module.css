@@ -27,7 +27,12 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  width: 300px;
+  width: 350px;
+}
+
+.searchBox > div {
+  margin-bottom: 0;
+  flex: 1;
 }
 
 .tableContainer {

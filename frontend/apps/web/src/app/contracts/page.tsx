@@ -57,8 +57,8 @@ export default function ContractsPage() {
       
       
       const [contractRes, empRes] = await Promise.all([
-        fetch('http://localhost:5205/api/contracts', {  }),
-        fetch('http://localhost:5205/api/employees', {  })
+        fetchApi('http://localhost:5205/api/contracts', {  }),
+        fetchApi('http://localhost:5205/api/employees', {  })
       ]);
       
       if (!contractRes.ok) throw new Error('Lỗi tải danh sách hợp đồng');

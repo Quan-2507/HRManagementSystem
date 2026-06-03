@@ -38,7 +38,14 @@ builder.Services.AddDbContext<HRManagementDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Register Identity
-builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
+    {
+        options.Password.RequireDigit = false;
+        options.Password.RequiredLength = 6;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+    })
     .AddEntityFrameworkStores<HRManagementDbContext>()
     .AddDefaultTokenProviders();
 
@@ -110,13 +117,14 @@ using (var scope = app.Services.CreateScope())
                 UserName = adminEmail,
                 Email = adminEmail,
                 FullName = "Administrator",
-                Status = 1,
-                Role = 1,
-                BaseSalary = 20000000,
+                Status = HRManagement.Core.Enums.EmployeeStatus.Active,
                 JoinDate = DateTime.UtcNow
             };
             await userManager.CreateAsync(newAdmin, "admin123");
         }
+
+        // Run clinic data seeder
+        await HRManagement.API.Data.ClinicDataSeeder.SeedAsync(services);
     }
     catch (Exception ex)
     {

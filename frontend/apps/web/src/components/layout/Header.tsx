@@ -53,50 +53,57 @@ export const Header = () => {
 
   return (
     <header className={styles.header}>
-      <div className={styles.left}>
-        <div className={styles.pageInfo}>
-          <h1 className={styles.pageTitle}>{getPageTitle()}</h1>
-          <div className={styles.tabs}>
-            <button className={`${styles.tab} ${styles.active}`}>Tổng hợp</button>
-            <button className={styles.tab}>Tổng quan</button>
+      <div className={styles.topRow}>
+        <div className={styles.left}>
+          <div className={styles.pageInfo}>
+            <div className={styles.plusIcon}>+</div>
+            <h1 className={styles.pageTitle}>{getPageTitle()}</h1>
           </div>
-        </div>
-      </div>
-      
-      <div className={styles.right}>
-        <div className={styles.searchBar}>
-          <Search size={18} className={styles.searchIcon} />
-          <input type="text" placeholder="Tìm kiếm..." className={styles.searchInput} />
         </div>
         
-        <button className={styles.iconBtn}>
-          <Bell size={20} />
-          <span className={styles.badge}>3</span>
-        </button>
-
-        <button className={styles.iconBtn}>
-          <Menu size={20} />
-        </button>
-
-        <div className={styles.divider}></div>
-
-        <div className={styles.userInfo}>
-          <div className={styles.avatar}>
-            {getInitials(user?.fullName || user?.email || 'User')}
+        <div className={styles.right}>
+          <div className={styles.searchBar}>
+            <Search size={16} className={styles.searchIcon} />
+            <input type="text" placeholder="Tìm kiếm..." className={styles.searchInput} />
           </div>
-          <div className={styles.userDetails}>
-            <span className={styles.userName}>{user?.fullName || 'Administrator'}</span>
-            <span className={styles.userRole}>Quản trị viên</span>
+          
+          <button className={styles.iconBtn}>
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+          </button>
+
+          <button className={styles.iconBtn}>
+            <Bell size={20} />
+            <span className={styles.badge}>12</span>
+          </button>
+
+          <button className={styles.iconBtn}>
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            <span className={styles.badge}>6</span>
+          </button>
+
+          <div className={styles.divider}></div>
+
+          <div className={styles.userInfo}>
+            <div className={styles.avatar}>
+              {getInitials(user?.fullName || user?.email || 'User')}
+            </div>
           </div>
+
+          <button 
+            className={styles.logoutBtn}
+            onClick={handleLogout}
+            title="Đăng xuất"
+          >
+            <LogOut size={18} />
+          </button>
         </div>
-
-        <button 
-          className={styles.logoutBtn}
-          onClick={handleLogout}
-          title="Đăng xuất"
-        >
-          <LogOut size={18} />
-        </button>
+      </div>
+      <div className={styles.bottomRow}>
+        <div className={styles.tabs}>
+          <button className={`${styles.tab} ${styles.active}`}>Thông tin chung</button>
+          <button className={styles.tab}>Ứng viên (12)</button>
+          <button className={styles.tab}>Báo cáo</button>
+        </div>
       </div>
     </header>
   );

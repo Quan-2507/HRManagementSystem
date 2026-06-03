@@ -46,8 +46,43 @@ namespace HRManagement.API.Services
                 .ToListAsync();
         }
 
+        private const double CompanyLat = 21.0285;
+        private const double CompanyLon = 105.8542;
+        private const double MaxDistanceKm = 0.5; // 500m
+
+        private double CalculateDistance(double lat1, double lon1, double lat2, double lon2)
+        {
+            var r = 6371; // Bán kính Trái đất (km)
+            var dLat = ToRadians(lat2 - lat1);
+            var dLon = ToRadians(lon2 - lon1);
+            var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                    Math.Cos(ToRadians(lat1)) * Math.Cos(ToRadians(lat2)) *
+                    Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+            var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            return r * c;
+        }
+
+        private double ToRadians(double angle)
+        {
+            return Math.PI * angle / 180.0;
+        }
+
+        private void ValidateLocation(double? lat, double? lon)
+        {
+            if (lat == null || lon == null)
+                throw new Exception("Không lấy được tọa độ GPS.");
+                
+            var distance = CalculateDistance(CompanyLat, CompanyLon, lat.Value, lon.Value);
+            if (distance > MaxDistanceKm)
+            {
+                throw new Exception($"Vị trí của bạn nằm ngoài bán kính cho phép. Khoảng cách hiện tại: {Math.Round(distance * 1000)}m (Yêu cầu <= 500m).");
+            }
+        }
+
         public async Task<AttendanceDto> CheckInAsync(Guid employeeId, CheckInDto dto)
         {
+            ValidateLocation(dto.Latitude, dto.Longitude);
+
             var today = DateTime.UtcNow.Date;
             var attendance = await _context.Attendances
                 .FirstOrDefaultAsync(a => a.EmployeeId == employeeId && a.Date == today);
@@ -94,6 +129,8 @@ namespace HRManagement.API.Services
 
         public async Task<AttendanceDto> CheckOutAsync(Guid employeeId, CheckInDto dto)
         {
+            ValidateLocation(dto.Latitude, dto.Longitude);
+
             var today = DateTime.UtcNow.Date;
             var attendance = await _context.Attendances
                 .FirstOrDefaultAsync(a => a.EmployeeId == employeeId && a.Date == today);

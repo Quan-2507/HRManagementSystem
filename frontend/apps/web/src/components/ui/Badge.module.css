@@ -9,21 +9,25 @@
 }
 
 .success {
-  background-color: rgba(52, 168, 83, 0.15);
-  color: #1e8e3e;
+  background-color: var(--color-success-bg);
+  color: var(--color-success);
+  border: 1px solid #b7eb8f;
 }
 
 .danger {
-  background-color: rgba(234, 67, 53, 0.15);
-  color: #d93025;
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+  border: 1px solid #ffa39e;
 }
 
 .warning {
-  background-color: rgba(251, 188, 4, 0.15);
-  color: #f29900;
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning);
+  border: 1px solid #ffe58f;
 }
 
 .neutral {
-  background-color: rgba(95, 99, 104, 0.15);
-  color: #5f6368;
+  background-color: var(--color-background);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
 }
