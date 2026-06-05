@@ -12,7 +12,12 @@ namespace HRManagement.Core.DTOs.Payrolls
         public int Month { get; set; }
         public int Year { get; set; }
         public decimal BasicSalary { get; set; }
-        public decimal Allowances { get; set; }
+        public decimal TravelAllowance { get; set; }
+        public decimal PhoneAllowance { get; set; }
+        public decimal UniformAllowance { get; set; }
+        public decimal HousingAllowance { get; set; }
+        public decimal MealAllowance { get; set; }
+        public decimal ResponsibilityAllowance { get; set; }
         public decimal Deductions { get; set; }
         public decimal NetSalary { get; set; }
         public PayrollStatus Status { get; set; }
@@ -29,7 +34,12 @@ namespace HRManagement.Core.DTOs.Payrolls
 
     public class PayrollUpdateDto
     {
-        public decimal Allowances { get; set; }
+        public decimal TravelAllowance { get; set; }
+        public decimal PhoneAllowance { get; set; }
+        public decimal UniformAllowance { get; set; }
+        public decimal HousingAllowance { get; set; }
+        public decimal MealAllowance { get; set; }
+        public decimal ResponsibilityAllowance { get; set; }
         public decimal Deductions { get; set; }
     }
 }

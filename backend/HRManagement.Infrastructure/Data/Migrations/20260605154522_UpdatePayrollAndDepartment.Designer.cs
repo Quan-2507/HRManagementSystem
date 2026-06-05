@@ -3,6 +3,7 @@ using System;
 using HRManagement.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HRManagement.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(HRManagementDbContext))]
-    partial class HRManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260605154522_UpdatePayrollAndDepartment")]
+    partial class UpdatePayrollAndDepartment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

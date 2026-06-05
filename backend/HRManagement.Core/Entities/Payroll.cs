@@ -14,7 +14,14 @@ namespace HRManagement.Core.Entities
         public int Year { get; set; }
         
         public decimal BasicSalary { get; set; }
-        public decimal Allowances { get; set; }
+        
+        public decimal TravelAllowance { get; set; }
+        public decimal PhoneAllowance { get; set; }
+        public decimal UniformAllowance { get; set; }
+        public decimal HousingAllowance { get; set; }
+        public decimal MealAllowance { get; set; }
+        public decimal ResponsibilityAllowance { get; set; }
+        
         public decimal Deductions { get; set; }
         
         public decimal NetSalary { get; set; }

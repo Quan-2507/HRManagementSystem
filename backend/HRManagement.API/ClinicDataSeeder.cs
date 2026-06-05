@@ -130,10 +130,11 @@ namespace HRManagement.API.Data
                         EmployeeId = e.Id,
                         Month = DateTime.UtcNow.Month,
                         Year = DateTime.UtcNow.Year,
-                        BasicSalary = baseSalary,
-                        Allowances = 1500000,
-                        Deductions = baseSalary * 0.105m,
-                        NetSalary = baseSalary + 1500000 - (baseSalary * 0.105m),
+                        BasicSalary = 15000000,
+                        TravelAllowance = 2000000,
+                        ResponsibilityAllowance = 1000000,
+                        Deductions = 500000,
+                        NetSalary = 17500000,
                         Status = HRManagement.Core.Enums.PayrollStatus.Paid
                     };
                 }).ToList();

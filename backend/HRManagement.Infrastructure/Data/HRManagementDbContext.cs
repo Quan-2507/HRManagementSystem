@@ -25,6 +25,12 @@ namespace HRManagement.Infrastructure.Data
             base.OnModelCreating(builder);
 
             // Configure relationships
+            builder.Entity<Department>()
+                .HasOne(d => d.ParentDepartment)
+                .WithMany(d => d.SubDepartments)
+                .HasForeignKey(d => d.ParentDepartmentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.Entity<ApplicationUser>()
                 .HasOne(e => e.Department)
                 .WithMany(d => d.Employees)
