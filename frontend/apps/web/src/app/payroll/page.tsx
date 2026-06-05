@@ -11,7 +11,9 @@ import {
   RefreshCcw,
   ChevronRight,
   ChevronDown,
-  Paperclip
+  Paperclip,
+  CreditCard,
+  X
 } from 'lucide-react';
 import styles from './payroll.module.css';
 
@@ -158,6 +160,7 @@ const formatCurrency = (amount: number) => {
 
 export default function PayrollSummaryPage() {
   const [data, setData] = useState(dummyData);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   const toggleExpand = (id: string) => {
     const updateNode = (nodes: any[]): any[] => {
@@ -204,6 +207,9 @@ export default function PayrollSummaryPage() {
             </button>
             <button className={styles.actionBtn}>
               <RefreshCcw size={16} /> Tính lại
+            </button>
+            <button className={styles.actionBtn} onClick={() => setIsPaymentModalOpen(true)} style={{ color: '#1a4388', borderColor: '#1a4388' }}>
+              <CreditCard size={16} /> Thanh toán MB Bank
             </button>
           </div>
         </div>
@@ -267,6 +273,79 @@ export default function PayrollSummaryPage() {
           </table>
         </div>
       </div>
+
+      {/* PAYMENT MODAL */}
+      {isPaymentModalOpen && (
+        <div className={styles.modalBackdrop}>
+          <div className={styles.paymentModal}>
+            <div className={styles.modalHeader}>
+              <h2 className={styles.modalTitle}>Thực hiện lệnh</h2>
+              <button className={styles.closeBtn} onClick={() => setIsPaymentModalOpen(false)}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className={styles.modalBody}>
+              <div className={styles.paymentForm}>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Tài khoản nguồn</label>
+                  <select className={styles.formSelect}>
+                    <option>MB Bank - 123456789 - 1,000,000,000 VND</option>
+                  </select>
+                </div>
+                <div className={styles.formGroup}>
+                  <label className={styles.formLabel}>Nội dung chuyển khoản</label>
+                  <input type="text" className={styles.formInput} defaultValue="Lương tháng 5/2026" />
+                </div>
+              </div>
+
+              <div className={styles.recipientTableContainer}>
+                <div style={{ padding: '1rem', borderBottom: '1px solid #e5e7eb' }}>
+                  <div className={styles.tableTitle}>
+                    Danh sách người nhận
+                    <span style={{ fontSize: '0.85rem', color: '#6b7280', fontWeight: 'normal' }}>Tổng: 2 giao dịch / 45.000.000 VND</span>
+                  </div>
+                </div>
+                <table className={styles.recipientTable}>
+                  <thead>
+                    <tr>
+                      <th>STT</th>
+                      <th>Tên người nhận</th>
+                      <th>Số tài khoản</th>
+                      <th>Ngân hàng</th>
+                      <th>Số tiền</th>
+                      <th>Trạng thái</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>Trần Minh Quân</td>
+                      <td>123456789</td>
+                      <td>Ngân hàng Quân đội MB</td>
+                      <td style={{ fontWeight: 600 }}>20.000.000 đ</td>
+                      <td><span className={styles.statusPending}>Đang chờ xử lý</span></td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>Nguyễn Văn A</td>
+                      <td>987654321</td>
+                      <td>Ngân hàng Ngoại thương VCB</td>
+                      <td style={{ fontWeight: 600 }}>25.000.000 đ</td>
+                      <td><span className={styles.statusPending}>Đang chờ xử lý</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div className={styles.modalFooter}>
+              <button className={styles.btnSecondary} onClick={() => setIsPaymentModalOpen(false)}>Đóng</button>
+              <button className={styles.btnMBBank}>Thực hiện lệnh</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
