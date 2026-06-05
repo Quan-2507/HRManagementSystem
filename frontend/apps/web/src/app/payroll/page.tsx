@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   Filter, 
@@ -17,129 +17,7 @@ import {
 } from 'lucide-react';
 import styles from './payroll.module.css';
 
-// --- Dummy Data ---
-const dummyData = [
-  {
-    id: '1',
-    name: 'A. CÔNG TY CỔ PHẦN 1OFFICE',
-    isExpanded: true,
-    level: 0,
-    headcount: 24,
-    basicSalary: 326400000,
-    travelAllow: 25000000,
-    phoneAllow: 13800000,
-    uniformAllow: 10000000,
-    housingAllow: 16500000,
-    mealAllow: 680000,
-    respAllow: 41100000,
-    children: [
-      {
-        id: '1.1',
-        name: '1. [GTV] Chi nhánh HCM 1Office',
-        isExpanded: true,
-        level: 1,
-        headcount: 24,
-        basicSalary: 326400000,
-        travelAllow: 25000000,
-        phoneAllow: 13800000,
-        uniformAllow: 10000000,
-        housingAllow: 16500000,
-        mealAllow: 680000,
-        respAllow: 41100000,
-        children: [
-          {
-            id: '1.1.1',
-            name: '1.1. [GTV] Phòng BOD chi nhánh',
-            isExpanded: true,
-            level: 2,
-            headcount: 5,
-            basicSalary: 99400000,
-            travelAllow: 6000000,
-            phoneAllow: 3000000,
-            uniformAllow: 3600000,
-            housingAllow: 11000000,
-            mealAllow: 200000,
-            respAllow: 2500000,
-            children: [
-              {
-                id: '1.1.1.1',
-                name: '1.1.1. [GTV] Phòng Cố Vấn Chi Nhánh',
-                isExpanded: false,
-                level: 3,
-                headcount: 2,
-                basicSalary: 42800000,
-                travelAllow: 2000000,
-                phoneAllow: 1200000,
-                uniformAllow: 800000,
-                housingAllow: 4000000,
-                mealAllow: 60000,
-                respAllow: 0,
-              },
-              {
-                id: '1.1.1.2',
-                name: '1.1.2. [GTV] Phòng Giám Sát Nội Bộ Chi Nhánh',
-                isExpanded: false,
-                level: 3,
-                headcount: 1,
-                basicSalary: 12700000,
-                travelAllow: 1000000,
-                phoneAllow: 600000,
-                uniformAllow: 400000,
-                housingAllow: 0,
-                mealAllow: 30000,
-                respAllow: 2500000,
-              }
-            ]
-          },
-          {
-            id: '1.1.2',
-            name: '1.2. [GTV] Phòng Kinh Doanh HCM',
-            isExpanded: true,
-            level: 2,
-            headcount: 7,
-            basicSalary: 73900000,
-            travelAllow: 7000000,
-            phoneAllow: 4200000,
-            uniformAllow: 2000000,
-            housingAllow: 1000000,
-            mealAllow: 150000,
-            respAllow: 10000000,
-            children: [
-              {
-                id: '1.1.2.1',
-                name: '1.2.1. [GTV] Phòng Kinh Doanh 1 - HCM',
-                isExpanded: false,
-                level: 3,
-                headcount: 2,
-                basicSalary: 20000000,
-                travelAllow: 2000000,
-                phoneAllow: 1200000,
-                uniformAllow: 400000,
-                housingAllow: 0,
-                mealAllow: 30000,
-                respAllow: 0,
-              },
-              {
-                id: '1.1.2.2',
-                name: '1.2.2. [GTV] Phòng Kinh Doanh 2 - HCM',
-                isExpanded: false,
-                level: 3,
-                headcount: 3,
-                basicSalary: 33300000,
-                travelAllow: 3000000,
-                phoneAllow: 1800000,
-                uniformAllow: 800000,
-                housingAllow: 1000000,
-                mealAllow: 60000,
-                respAllow: 5000000,
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
-];
+// We will fetch from API instead of using dummy data
 
 // Flatting function for tree rendering
 const flattenData = (nodes: any[], result: any[] = []) => {
@@ -159,8 +37,26 @@ const formatCurrency = (amount: number) => {
 };
 
 export default function PayrollSummaryPage() {
-  const [data, setData] = useState(dummyData);
+  const [data, setData] = useState<any[]>([]);
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch data from backend API
+    const currentMonth = new Date().getMonth() + 1;
+    const currentYear = new Date().getFullYear();
+    
+    fetch(`http://localhost:5205/api/payrolls/summary?month=${currentMonth}&year=${currentYear}`)
+      .then(res => res.json())
+      .then(json => {
+        setData(json);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to fetch payroll summary", err);
+        setIsLoading(false);
+      });
+  }, []);
 
   const toggleExpand = (id: string) => {
     const updateNode = (nodes: any[]): any[] => {
@@ -239,7 +135,19 @@ export default function PayrollSummaryPage() {
               </tr>
             </thead>
             <tbody>
-              {flatList.map((row, index) => (
+              {isLoading ? (
+                <tr>
+                  <td colSpan={9} style={{ textAlign: 'center', padding: '2rem' }}>
+                    Đang tải dữ liệu từ API...
+                  </td>
+                </tr>
+              ) : flatList.length === 0 ? (
+                <tr>
+                  <td colSpan={9} style={{ textAlign: 'center', padding: '2rem' }}>
+                    Không có dữ liệu
+                  </td>
+                </tr>
+              ) : flatList.map((row, index) => (
                 <tr key={row.id} className={row.level === 0 ? styles.rowLevel0 : row.level === 1 ? styles.rowLevel1 : ''}>
                   <td className={`${styles.stickyCol} ${styles.colDept}`}>
                     <div 
@@ -341,7 +249,13 @@ export default function PayrollSummaryPage() {
 
             <div className={styles.modalFooter}>
               <button className={styles.btnSecondary} onClick={() => setIsPaymentModalOpen(false)}>Đóng</button>
-              <button className={styles.btnMBBank}>Thực hiện lệnh</button>
+              <button className={styles.btnMBBank} onClick={() => {
+                fetch('http://localhost:5205/api/payrolls/execute-payment', { method: 'POST' })
+                  .then(() => {
+                    alert('Lệnh thanh toán đã được đẩy sang MB Bank thành công!');
+                    setIsPaymentModalOpen(false);
+                  });
+              }}>Thực hiện lệnh</button>
             </div>
           </div>
         </div>
