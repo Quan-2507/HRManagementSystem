@@ -213,3 +213,34 @@
   background-color: var(--color-error-bg);
   color: var(--color-error);
 }
+
+.userDropdownMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.dropdownItem {
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  color: var(--color-text-main);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.dropdownItem:hover {
+  background-color: var(--color-background);
+}
+
+.dropdownDivider {
+  height: 1px;
+  background-color: var(--color-border-light);
+  margin: 4px 0;
+}
