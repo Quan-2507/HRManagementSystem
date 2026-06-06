@@ -31,7 +31,7 @@ export const Sidebar = () => {
     { name: 'Đề xuất', path: '/leave-requests', icon: FileText },
     { name: 'Chiến dịch', path: '/contracts', icon: Megaphone },
     { name: 'Phỏng vấn', path: '/attendance', icon: CalendarCheck },
-    { name: 'Đánh giá', path: '/performance', icon: Star },
+    { name: 'Đánh giá KPI', path: '/kpis', icon: Star },
     { name: 'Định biên', path: '/departments', icon: Briefcase },
   ];
 

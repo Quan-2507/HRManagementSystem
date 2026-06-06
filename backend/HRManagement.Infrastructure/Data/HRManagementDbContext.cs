@@ -19,6 +19,7 @@ namespace HRManagement.Infrastructure.Data
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<Contract> Contracts { get; set; }
         public DbSet<Payroll> Payrolls { get; set; }
+        public DbSet<EmployeeKpi> EmployeeKpis { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -72,6 +73,18 @@ namespace HRManagement.Infrastructure.Data
                 .WithMany()
                 .HasForeignKey(p => p.EmployeeId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<EmployeeKpi>()
+                .HasOne(k => k.Employee)
+                .WithMany()
+                .HasForeignKey(k => k.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<EmployeeKpi>()
+                .HasOne(k => k.Reviewer)
+                .WithMany()
+                .HasForeignKey(k => k.ReviewerId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

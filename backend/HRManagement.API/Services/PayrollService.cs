@@ -182,6 +182,17 @@ namespace HRManagement.API.Services
                 {
                     decimal baseSalary = item.ActiveContract!.BasicSalary;
                     
+                    // Lấy số giờ làm việc thực tế từ Attendance
+                    var attendances = await _context.Attendances
+                        .Where(a => a.EmployeeId == item.EmployeeId && a.Date.Month == month && a.Date.Year == year)
+                        .ToListAsync();
+                    
+                    double totalWorkingHours = attendances.Sum(a => a.WorkingHours);
+                    double actualWorkingDays = totalWorkingHours / 8.0;
+                    double standardWorkingDays = 22.0;
+
+                    decimal netSalary = baseSalary * (decimal)(actualWorkingDays / standardWorkingDays);
+                    
                     var payroll = new Payroll
                     {
                         EmployeeId = item.EmployeeId,
@@ -195,7 +206,7 @@ namespace HRManagement.API.Services
                         MealAllowance = 0,
                         ResponsibilityAllowance = 0,
                         Deductions = 0,
-                        NetSalary = baseSalary, // base + 0 - 0
+                        NetSalary = netSalary, // Calculated dynamically
                         Status = PayrollStatus.Draft
                     };
 

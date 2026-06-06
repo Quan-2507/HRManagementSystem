@@ -20,6 +20,7 @@ builder.Services.AddScoped<HRManagement.API.Services.IAttendanceService, HRManag
 builder.Services.AddScoped<HRManagement.API.Services.ILeaveRequestService, HRManagement.API.Services.LeaveRequestService>();
 builder.Services.AddScoped<HRManagement.API.Services.IContractService, HRManagement.API.Services.ContractService>();
 builder.Services.AddScoped<HRManagement.API.Services.IPayrollService, HRManagement.API.Services.PayrollService>();
+builder.Services.AddScoped<HRManagement.API.Services.IKpiService, HRManagement.API.Services.KpiService>();
 
 builder.Services.AddCors(options =>
 {
