@@ -20,6 +20,7 @@ namespace HRManagement.Infrastructure.Data
         public DbSet<Contract> Contracts { get; set; }
         public DbSet<Payroll> Payrolls { get; set; }
         public DbSet<EmployeeKpi> EmployeeKpis { get; set; }
+        public DbSet<Candidate> Candidates { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -85,6 +86,12 @@ namespace HRManagement.Infrastructure.Data
                 .WithMany()
                 .HasForeignKey(k => k.ReviewerId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Candidate>()
+                .HasOne(c => c.OnboardedEmployee)
+                .WithMany()
+                .HasForeignKey(c => c.OnboardedEmployeeId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

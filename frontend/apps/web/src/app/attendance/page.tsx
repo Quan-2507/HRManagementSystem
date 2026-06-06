@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { DashboardLayout } from '../../components/layout/DashboardLayout';
 import { Table, Column } from '../../components/ui/Table';
 import { Button } from '../../components/ui/Button';
+import { Badge } from '../../components/ui/Badge';
 import styles from './attendance.module.css';
 
 interface AttendanceRecord {
@@ -148,9 +149,9 @@ export default function AttendancePage() {
              <Badge variant="danger">Vắng</Badge>}
           </div>
           <div style={{ display: 'flex', gap: '4px' }}>
-            {row.isLate && <Badge variant="danger" style={{ fontSize: '0.7rem' }}>Đi muộn</Badge>}
-            {row.isEarlyLeave && <Badge variant="danger" style={{ fontSize: '0.7rem' }}>Về sớm</Badge>}
-          </div>
+          {row.isLate && <div style={{ fontSize: '0.7rem' }}><Badge variant="danger">Đi muộn</Badge></div>}
+          {row.isEarlyLeave && <div style={{ fontSize: '0.7rem' }}><Badge variant="danger">Về sớm</Badge></div>}
+        </div>
           {row.checkOutTime && <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{row.workingHours} giờ</div>}
         </div>
       ), 

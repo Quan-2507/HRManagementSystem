@@ -21,6 +21,7 @@ builder.Services.AddScoped<HRManagement.API.Services.ILeaveRequestService, HRMan
 builder.Services.AddScoped<HRManagement.API.Services.IContractService, HRManagement.API.Services.ContractService>();
 builder.Services.AddScoped<HRManagement.API.Services.IPayrollService, HRManagement.API.Services.PayrollService>();
 builder.Services.AddScoped<HRManagement.API.Services.IKpiService, HRManagement.API.Services.KpiService>();
+builder.Services.AddScoped<HRManagement.API.Services.ICandidateService, HRManagement.API.Services.CandidateService>();
 
 builder.Services.AddCors(options =>
 {

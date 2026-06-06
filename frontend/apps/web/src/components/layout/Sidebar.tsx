@@ -27,7 +27,8 @@ export const Sidebar = () => {
   // Menu cho phân hệ Tuyển dụng (Mặc định)
   const recruitmentMenu = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
-    { name: 'Ứng viên', path: '/employees', icon: Users },
+    { name: 'Ứng viên', path: '/candidates', icon: Users },
+    { name: 'Nhân sự', path: '/employees', icon: Users },
     { name: 'Đề xuất', path: '/leave-requests', icon: FileText },
     { name: 'Chiến dịch', path: '/contracts', icon: Megaphone },
     { name: 'Phỏng vấn', path: '/attendance', icon: CalendarCheck },
