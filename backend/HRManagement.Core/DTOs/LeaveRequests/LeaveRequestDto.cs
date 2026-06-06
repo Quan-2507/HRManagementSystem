@@ -16,6 +16,7 @@ namespace HRManagement.Core.DTOs.LeaveRequests
         public LeaveStatus Status { get; set; }
         public Guid? ApproverId { get; set; }
         public string? ApproverName { get; set; }
+        public string? RejectReason { get; set; }
     }
 
     public class LeaveRequestCreateDto
@@ -36,5 +37,7 @@ namespace HRManagement.Core.DTOs.LeaveRequests
     {
         [Required]
         public LeaveStatus Status { get; set; } // Approved or Rejected
+        
+        public string? RejectReason { get; set; }
     }
 }

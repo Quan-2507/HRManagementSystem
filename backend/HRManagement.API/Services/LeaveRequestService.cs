@@ -44,7 +44,8 @@ namespace HRManagement.API.Services
                     Reason = r.Reason,
                     Status = r.Status,
                     ApproverId = r.ApproverId,
-                    ApproverName = r.Approver != null ? r.Approver.FullName : null
+                    ApproverName = r.Approver != null ? r.Approver.FullName : null,
+                    RejectReason = r.RejectReason
                 })
                 .ToListAsync();
         }
@@ -67,7 +68,8 @@ namespace HRManagement.API.Services
                     Reason = r.Reason,
                     Status = r.Status,
                     ApproverId = r.ApproverId,
-                    ApproverName = r.Approver != null ? r.Approver.FullName : null
+                    ApproverName = r.Approver != null ? r.Approver.FullName : null,
+                    RejectReason = r.RejectReason
                 })
                 .ToListAsync();
         }
@@ -119,6 +121,10 @@ namespace HRManagement.API.Services
 
             request.Status = dto.Status;
             request.ApproverId = approverId;
+            if (dto.Status == HRManagement.Core.Enums.LeaveStatus.Rejected)
+            {
+                request.RejectReason = dto.RejectReason;
+            }
 
             await _context.SaveChangesAsync();
             return true;

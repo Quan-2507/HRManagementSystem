@@ -19,5 +19,7 @@ namespace HRManagement.Core.Entities
 
         public Guid? ApproverId { get; set; }
         public ApplicationUser? Approver { get; set; }
+
+        public string? RejectReason { get; set; }
     }
 }

@@ -14,6 +14,10 @@ interface AttendanceRecord {
   checkOutTime: string | null;
   checkInLocationName: string | null;
   checkOutLocationName: string | null;
+  workingHours: number;
+  isLate: boolean;
+  isEarlyLeave: boolean;
+  status: number;
 }
 
 export default function AttendancePage() {
@@ -132,7 +136,25 @@ export default function AttendancePage() {
     { 
       header: 'Vị trí Check-out', 
       accessor: (row) => row.checkOutLocationName || '-', 
-      width: '25%' 
+      width: '15%' 
+    },
+    { 
+      header: 'Trạng thái', 
+      accessor: (row) => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          <div>
+            {row.status === 1 ? <Badge variant="success">Đủ công</Badge> : 
+             row.status === 2 ? <Badge variant="neutral">Nửa công</Badge> : 
+             <Badge variant="danger">Vắng</Badge>}
+          </div>
+          <div style={{ display: 'flex', gap: '4px' }}>
+            {row.isLate && <Badge variant="danger" style={{ fontSize: '0.7rem' }}>Đi muộn</Badge>}
+            {row.isEarlyLeave && <Badge variant="danger" style={{ fontSize: '0.7rem' }}>Về sớm</Badge>}
+          </div>
+          {row.checkOutTime && <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{row.workingHours} giờ</div>}
+        </div>
+      ), 
+      width: '15%' 
     }
   ];
 

@@ -21,6 +21,15 @@ namespace HRManagement.Core.Entities
         public double? CheckOutLongitude { get; set; }
         public string? CheckOutLocationName { get; set; }
         
+        public double WorkingHours { get; set; }
+        public bool IsLate { get; set; }
+        public bool IsEarlyLeave { get; set; }
+        
+        // Let's use string or int for status to avoid creating a new enum file right now,
+        // Actually I should just use int for simplicity or create the Enum.
+        // Let's use an int: 0 = Absent, 1 = Present, 2 = HalfDay
+        public int Status { get; set; } = 0; 
+        
         public string? Notes { get; set; }
     }
 }

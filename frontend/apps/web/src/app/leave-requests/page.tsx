@@ -19,6 +19,7 @@ interface LeaveRequest {
   reason: string;
   status: number;
   approverName: string | null;
+  rejectReason: string | null;
 }
 
 const LeaveTypeMap: Record<number, string> = {
@@ -95,12 +96,19 @@ export default function LeaveRequestsPage() {
   };
 
   const handleApproveReject = async (id: string, newStatus: number) => {
+    let rejectReason = '';
+    if (newStatus === 3) {
+      const reason = prompt('Nhập lý do từ chối:');
+      if (reason === null) return; // User cancelled
+      rejectReason = reason;
+    }
+
     try {
       
       const res = await fetchApi(`http://localhost:5205/api/leaveRequests/${id}/approve`, {
         method: 'PUT',
         
-        body: JSON.stringify({ status: newStatus })
+        body: JSON.stringify({ status: newStatus, rejectReason })
       });
       
       if (!res.ok) {
@@ -132,7 +140,12 @@ export default function LeaveRequestsPage() {
         // 1: Pending, 2: Approved, 3: Rejected
         if (row.status === 1) return <Badge variant="neutral">Chờ duyệt</Badge>;
         if (row.status === 2) return <Badge variant="success">Đã duyệt</Badge>;
-        return <Badge variant="danger">Từ chối</Badge>;
+        return (
+          <div style={{display: 'flex', flexDirection: 'column', gap: '4px'}}>
+            <Badge variant="danger">Từ chối</Badge>
+            {row.rejectReason && <span style={{fontSize: '0.75rem', color: '#ef4444'}}>Lý do: {row.rejectReason}</span>}
+          </div>
+        );
       },
       width: '15%' 
     },

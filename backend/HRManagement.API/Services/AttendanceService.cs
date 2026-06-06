@@ -113,6 +113,14 @@ namespace HRManagement.API.Services
                 attendance.CheckInLocationName = dto.LocationName;
             }
 
+            // Check if late (after 08:30 AM)
+            // Need to convert Utc to Local time for calculation, let's assume UTC+7
+            var localTime = attendance.CheckInTime.Value.AddHours(7);
+            if (localTime.TimeOfDay > new TimeSpan(8, 30, 0))
+            {
+                attendance.IsLate = true;
+            }
+
             await _context.SaveChangesAsync();
 
             var emp = await _context.Users.FindAsync(employeeId);
@@ -149,6 +157,22 @@ namespace HRManagement.API.Services
             attendance.CheckOutLatitude = dto.Latitude;
             attendance.CheckOutLongitude = dto.Longitude;
             attendance.CheckOutLocationName = dto.LocationName;
+
+            // Calculate early leave (before 17:30 PM)
+            var localOutTime = attendance.CheckOutTime.Value.AddHours(7);
+            if (localOutTime.TimeOfDay < new TimeSpan(17, 30, 0))
+            {
+                attendance.IsEarlyLeave = true;
+            }
+
+            // Calculate working hours
+            var totalHours = (attendance.CheckOutTime.Value - attendance.CheckInTime.Value).TotalHours;
+            // Subtract 1 hour for lunch if working hours > 4
+            var workingHours = totalHours > 4 ? totalHours - 1 : totalHours;
+            attendance.WorkingHours = Math.Max(0, Math.Round(workingHours, 2));
+
+            // Status: 1 = Present, 2 = HalfDay, 0 = Absent
+            attendance.Status = attendance.WorkingHours >= 7 ? 1 : (attendance.WorkingHours >= 3.5 ? 2 : 0);
 
             await _context.SaveChangesAsync();
 
