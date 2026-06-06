@@ -96,7 +96,14 @@ namespace HRManagement.API.Services
                 BankName = user.BankName,
                 Status = user.Status,
                 DepartmentName = user.Department?.Name,
-                PositionTitle = user.Position?.Title
+                PositionTitle = user.Position?.Title,
+                PersonalEmail = user.PersonalEmail,
+                AvatarUrl = user.AvatarUrl,
+                Gender = user.Gender,
+                MaritalStatus = user.MaritalStatus,
+                EmergencyContact = user.EmergencyContact,
+                IdentityIssueDate = user.IdentityIssueDate,
+                IdentityIssuePlace = user.IdentityIssuePlace
             };
         }
 
@@ -139,6 +146,17 @@ namespace HRManagement.API.Services
             user.DepartmentId = dto.DepartmentId;
             user.PositionId = dto.PositionId;
             user.Address = dto.Address;
+            // Map new fields
+            user.PersonalEmail = dto.PersonalEmail;
+            user.Gender = dto.Gender;
+            user.MaritalStatus = dto.MaritalStatus;
+            user.EmergencyContact = dto.EmergencyContact;
+            user.IdentityNumber = dto.IdentityNumber;
+            user.IdentityIssueDate = dto.IdentityIssueDate;
+            user.IdentityIssuePlace = dto.IdentityIssuePlace;
+            user.TaxCode = dto.TaxCode;
+            user.BankAccount = dto.BankAccount;
+            user.BankName = dto.BankName;
 
             var result = await _userManager.UpdateAsync(user);
             return result.Succeeded;

@@ -20,6 +20,7 @@ export default function DepartmentsPage() {
   const [data, setData] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [viewMode, setViewMode] = useState<'table' | 'chart'>('table');
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -131,17 +132,54 @@ export default function DepartmentsPage() {
   return (
     <DashboardLayout>
       <div className={styles.pageHeader}>
-        <h1 className={styles.pageTitle}>Quản lý Phòng ban</h1>
-        <Button onClick={() => openModal()}>+ Thêm mới phòng ban</Button>
+        <h1 className={styles.pageTitle}>Cơ cấu Tổ chức (Phòng ban)</h1>
+        <div style={{display: 'flex', gap: '1rem'}}>
+          <Button variant={viewMode === 'table' ? 'primary' : 'secondary'} onClick={() => setViewMode('table')}>Dạng Bảng</Button>
+          <Button variant={viewMode === 'chart' ? 'primary' : 'secondary'} onClick={() => setViewMode('chart')}>Sơ đồ Tổ chức</Button>
+          <Button onClick={() => openModal()}>+ Thêm mới</Button>
+        </div>
       </div>
 
       <div className={styles.tableContainer}>
         {error && <div style={{ color: 'red', marginBottom: '1rem' }}>{error}</div>}
-        <Table<Department> 
-          columns={columns} 
-          data={data} 
-          keyExtractor={(row) => row.id} 
-        />
+        
+        {viewMode === 'table' ? (
+          <Table<Department> 
+            columns={columns} 
+            data={data} 
+            keyExtractor={(row) => row.id} 
+          />
+        ) : (
+          <div style={{ padding: '2rem', textAlign: 'center', backgroundColor: '#f8fafc', borderRadius: '8px', minHeight: '400px' }}>
+            <h2 style={{marginBottom: '2rem'}}>Sơ đồ Tổ chức Doanh nghiệp</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem' }}>
+              
+              <div style={{ padding: '1rem 2rem', backgroundColor: '#2563eb', color: '#fff', borderRadius: '8px', fontWeight: 'bold' }}>
+                Ban Giám Đốc
+              </div>
+              
+              <div style={{ width: '2px', height: '30px', backgroundColor: '#cbd5e1' }}></div>
+              
+              <div style={{ display: 'flex', gap: '3rem', position: 'relative' }}>
+                {/* Horizontal line connecting children */}
+                <div style={{ position: 'absolute', top: '-15px', left: '10%', right: '10%', height: '2px', backgroundColor: '#cbd5e1' }}></div>
+                
+                {data.map(dept => (
+                  <div key={dept.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ width: '2px', height: '15px', backgroundColor: '#cbd5e1' }}></div>
+                    <div style={{ padding: '1rem', backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', width: '150px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
+                      <div style={{ fontWeight: 600, color: '#1e293b' }}>{dept.name}</div>
+                      <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.5rem' }}>{dept.employeeCount} nhân sự</div>
+                    </div>
+                  </div>
+                ))}
+                
+                {data.length === 0 && <div style={{color: '#64748b'}}>Chưa có phòng ban nào</div>}
+              </div>
+              
+            </div>
+          </div>
+        )}
       </div>
 
       <Modal 

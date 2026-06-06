@@ -184,7 +184,8 @@ export default function EmployeesPage() {
       header: 'Hành động',
       accessor: (row) => (
         <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <Button variant="secondary" onClick={() => openEditModal(row)} style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>Sửa</Button>
+          <Button variant="primary" onClick={() => window.location.href = `/employees/${row.id}`} style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>Hồ sơ</Button>
+          <Button variant="secondary" onClick={() => openEditModal(row)} style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>Sửa nhanh</Button>
           <Button onClick={() => handleDeleteEmployee(row.id)} style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem', backgroundColor: '#dc3545', color: '#fff', borderColor: '#dc3545' }}>Xóa</Button>
         </div>
       ),
