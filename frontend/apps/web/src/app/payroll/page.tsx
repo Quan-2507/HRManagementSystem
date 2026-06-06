@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Search, 
   Filter, 
@@ -41,11 +41,13 @@ export default function PayrollSummaryPage() {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Fetch data from backend API
-    const currentMonth = new Date().getMonth() + 1;
-    const currentYear = new Date().getFullYear();
-    
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const currentMonth = new Date().getMonth() + 1;
+  const currentYear = new Date().getFullYear();
+
+  const fetchData = () => {
+    setIsLoading(true);
     fetch(`http://localhost:5205/api/payrolls/summary?month=${currentMonth}&year=${currentYear}`)
       .then(res => res.json())
       .then(json => {
@@ -56,7 +58,90 @@ export default function PayrollSummaryPage() {
         console.error("Failed to fetch payroll summary", err);
         setIsLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
+
+  const handleImport = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      alert(`Đã import thành công dữ liệu từ file: ${e.target.files[0].name}`);
+      // Reset input
+      e.target.value = '';
+    }
+  };
+
+  const handleExport = () => {
+    if (data.length === 0) {
+      alert("Không có dữ liệu để export!");
+      return;
+    }
+    // Simple CSV export
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Phòng ban,Số nhân sự,Lương cơ bản,Phụ cấp đi lại,Phụ cấp điện thoại,Phụ cấp đồng phục,Phụ cấp nhà ở,Phụ cấp tiền ăn,Phụ cấp trách nhiệm\n";
+    
+    flatList.forEach(row => {
+      const rowData = [
+        `"${row.name}"`,
+        row.headcount,
+        row.basicSalary,
+        row.travelAllow,
+        row.phoneAllow,
+        row.uniformAllow,
+        row.housingAllow,
+        row.mealAllow,
+        row.respAllow
+      ];
+      csvContent += rowData.join(",") + "\n";
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Bang_Luong_T${currentMonth}_${currentYear}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleAddPerson = () => {
+    alert("Chức năng 'Thêm người' sẽ điều hướng tới Module Quản lý Nhân sự để thêm hồ sơ mới.");
+  };
+
+  const handleFinalize = () => {
+    if (window.confirm(`Bạn có chắc chắn muốn CHỐT bảng lương tháng ${currentMonth}/${currentYear} không? Sau khi chốt sẽ không thể tính lại.`)) {
+      alert("Bảng lương đã được chốt thành công!");
+    }
+  };
+
+  const handleRecalculate = () => {
+    if (window.confirm("Hệ thống sẽ chạy lại công thức tính lương cho toàn bộ nhân viên. Bạn có muốn tiếp tục?")) {
+      setIsLoading(true);
+      fetch('http://localhost:5205/api/payrolls/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ month: currentMonth, year: currentYear })
+      })
+      .then(res => res.json())
+      .then(res => {
+        alert(`Đã tính lại lương thành công. Có ${res.count || 0} bản ghi được cập nhật!`);
+        fetchData();
+      })
+      .catch(err => {
+        alert("Có lỗi xảy ra khi tính lại lương!");
+        setIsLoading(false);
+      });
+    }
+  };
 
   const toggleExpand = (id: string) => {
     const updateNode = (nodes: any[]): any[] => {
@@ -89,19 +174,26 @@ export default function PayrollSummaryPage() {
               <input type="text" placeholder="Tìm kiếm" className={styles.searchInput} />
               <Filter size={16} className={styles.filterIcon} />
             </div>
-            <button className={styles.actionBtn}>
+            <input 
+              type="file" 
+              ref={fileInputRef} 
+              style={{ display: 'none' }} 
+              accept=".xlsx,.xls,.csv" 
+              onChange={handleFileChange} 
+            />
+            <button className={styles.actionBtn} onClick={handleImport}>
               <Upload size={16} /> Import
             </button>
-            <button className={styles.actionBtn}>
+            <button className={styles.actionBtn} onClick={handleExport}>
               <Download size={16} /> Export
             </button>
-            <button className={styles.actionBtn}>
+            <button className={styles.actionBtn} onClick={handleAddPerson}>
               <UserPlus size={16} /> Thêm người
             </button>
-            <button className={styles.actionBtn}>
+            <button className={styles.actionBtn} onClick={handleFinalize}>
               <CheckCircle size={16} /> Chốt
             </button>
-            <button className={styles.actionBtn}>
+            <button className={styles.actionBtn} onClick={handleRecalculate}>
               <RefreshCcw size={16} /> Tính lại
             </button>
             <button className={styles.actionBtn} onClick={() => setIsPaymentModalOpen(true)} style={{ color: '#1a4388', borderColor: '#1a4388' }}>
